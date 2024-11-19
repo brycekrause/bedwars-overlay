@@ -55,7 +55,7 @@ content_frame.grid_columnconfigure(1, weight=1)
 
 import requests
 import threading
-KEY = ""
+KEY = "ed10d737-e69f-4ca6-beba-f28b44c3cc5d"
 
 row = 1
 labels = []
@@ -151,7 +151,7 @@ def getStats(user):
 
     create_labels(name, star_color, bwfkdr)
 
-name = ''
+name = 'bryce'
 client = '.lunarclient'
 logs = f"C:/Users/{name}/.lunarclient/offline/multiver/logs/latest.log"
 
