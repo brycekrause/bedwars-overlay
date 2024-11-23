@@ -16,7 +16,7 @@ def do_drag(event):
                   
 root = tk.Tk()
 root.title("HyOverlay")
-root.geometry("300x600")
+root.geometry("330x630")
 
 # Make the window transparent
 root.attributes('-alpha', 0.8)
@@ -28,7 +28,7 @@ root.overrideredirect(True)
 root.attributes('-topmost', True)
 
 # Add a frame to act as the window's header
-header_frame = tk.Frame(root, bg='black', relief='raised', bd=2)
+header_frame = tk.Frame(root, bg='black', relief='raised', bd=0)
 header_frame.pack(fill=tk.X)
 
 # Add buttons to the header frame
@@ -56,13 +56,18 @@ content_frame.grid_columnconfigure(1, weight=1)
 
 import requests
 import threading
-KEY = "ed10d737-e69f-4ca6-beba-f28b44c3cc5d"
+KEY = "e08d5a41-8897-41fa-a355-6ff6e9578553"
+KEY = input("Paste your API key: ")
+print("Welcome to HYOVERLAY!")
+print("Use '/bw' to check individual stats")
+print("Example: /bw Dewier WarOG")
 
 row = 1
 labels = []
 
 def getInfo(call):
   call = call.rstrip("\n")
+  call = call.rstrip("')")
   r = requests.get(call)
   if r.status_code == 204:
     return {'name': 'Null'}
@@ -71,19 +76,15 @@ def getInfo(call):
 def create_labels(name, star_color, fkdr):
     global row
 
-    # Add separators after the column labels 
-    separator = ttk.Separator(content_frame, orient='horizontal') 
-    separator.grid(row=row, column=0, columnspan=2, sticky='ew')  
-
     name_label = tk.Label(content_frame, text=name, fg=star_color, bg="black", font=("Helvetica", 12, 'bold')) 
-    #name_label.pack(side='left', padx=10, pady=20)
     name_label.grid(row=row, column=0, padx=20, pady=5, sticky='w') 
+
     fkdr_label = tk.Label(content_frame, text=fkdr, fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
-    #fkdr_label.pack(side='right', padx=10, pady=20)
     fkdr_label.grid(row=row, column=1, padx=20, pady=5, sticky='e')
+
     labels.append(name_label)
     labels.append(fkdr_label)
-    labels.append(separator)
+
     row += 1
 
 def delete_labels():
@@ -173,6 +174,14 @@ def log_monitor():
                 delete_labels()
                 for x in players_arr:
                     getStats(x)
+            elif "('bw" in line:
+                players = line.split("('bw ")[1]
+                players_arr = players.split(" ")
+                row = 1
+                delete_labels()
+                for x in players_arr:
+                    getStats(x)
+
 
 def start_threading():
     thread = threading.Thread(target=log_monitor) 
