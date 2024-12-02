@@ -6,6 +6,7 @@ import os
     # write api key to file
     # paste api key in gui rather than terminal
 
+
 def close_window():
     root.destroy()
 
@@ -60,8 +61,18 @@ content_frame.grid_columnconfigure(1, weight=1)
 
 import requests
 import threading
-KEY = "e08d5a41-8897-41fa-a355-6ff6e9578553"
-KEY = input("Paste your API key: ")
+try:
+    with open('key.txt', 'r') as f:
+        for line in f:
+            KEY = line[0]
+    f.close()
+except:
+    print("Invalid API key.")
+    with open('key.txt', 'w') as f:
+        f.write(input("Paste your API key: "))
+
+    f.close()
+
 print("Welcome to HYOVERLAY!")
 print("Use '/bw' to check individual stats")
 print("Example: /bw Dewier WarOG")
