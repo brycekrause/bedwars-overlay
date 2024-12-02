@@ -61,21 +61,6 @@ content_frame.grid_columnconfigure(1, weight=1)
 
 import requests
 import threading
-try:
-    with open('key.txt', 'r') as f:
-        for line in f:
-            KEY = line[0]
-    f.close()
-except:
-    print("Invalid API key.")
-    with open('key.txt', 'w') as f:
-        f.write(input("Paste your API key: "))
-
-    f.close()
-
-print("Welcome to HYOVERLAY!")
-print("Use '/bw' to check individual stats")
-print("Example: /bw Dewier WarOG")
 
 row = 1
 labels = []
@@ -87,6 +72,37 @@ def getInfo(call):
   if r.status_code == 204:
     return {'name': 'Null'}
   return r.json()
+
+try:
+    with open('key.txt', 'r') as f:
+        for line in f:
+            KEY = line[0]
+    f.close()
+
+    key_check_url = f'https://api.hypixel.net/counts?key={KEY}'
+    key_check = getInfo(key_check_url)
+
+    # FIX THIS!
+    if key_check['success'] == 'true':
+        print("success")
+    else:
+        print("Invalid API key.")
+        with open('key.txt', 'w') as f:
+            f.write(input("Paste your API key: "))
+        f.close()
+except:
+    print("Invalid API key.")
+    with open('key.txt', 'w') as f:
+        f.write(input("Paste your API key: "))
+
+    f.close()
+
+print("Welcome to HYOVERLAY!")
+print("Use '/bw' to check individual stats")
+print("Example: /bw Dewier WarOG")
+
+
+
 
 def create_labels(name, star_color, fkdr):
     global row
