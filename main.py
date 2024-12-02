@@ -73,18 +73,17 @@ def getInfo(call):
     return {'name': 'Null'}
   return r.json()
 
+# set api key
 try:
     with open('key.txt', 'r') as f:
-        for line in f:
-            KEY = line[0]
+        KEY = f.readline()
+
+        key_check_url = f'https://api.hypixel.net/counts?key={KEY}'
+        key_check = getInfo(key_check_url)
     f.close()
 
-    key_check_url = f'https://api.hypixel.net/counts?key={KEY}'
-    key_check = getInfo(key_check_url)
-
-    # FIX THIS!
-    if key_check['success'] == 'true':
-        print("success")
+    if key_check['success'] == True:
+        print("API key set successfully!")
     else:
         print("Invalid API key.")
         with open('key.txt', 'w') as f:
@@ -100,9 +99,6 @@ except:
 print("Welcome to HYOVERLAY!")
 print("Use '/bw' to check individual stats")
 print("Example: /bw Dewier WarOG")
-
-
-
 
 def create_labels(name, star_color, fkdr):
     global row
