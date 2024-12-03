@@ -2,8 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import os
 
-#TODO: read api key from file
-    # write api key to file
+#TODO: 
     # paste api key in gui rather than terminal
 
 
