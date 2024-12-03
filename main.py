@@ -82,14 +82,13 @@ try:
         key_check = getInfo(key_check_url)
     f.close()
 
-    if key_check['success'] == True:
-        print("API key set successfully!")
-    else:
+    if key_check['success'] == False:
         print("Invalid API key.")
         with open('key.txt', 'w') as f:
             f.write(input("Paste your API key: "))
         f.close()
-except:
+except Exception as e:
+    print(f"ERROR: {e}")
     print("Invalid API key.")
     with open('key.txt', 'w') as f:
         f.write(input("Paste your API key: "))
