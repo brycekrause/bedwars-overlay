@@ -74,30 +74,33 @@ def getInfo(call):
   return r.json()
 
 # set api key
-try:
-    with open('key.txt', 'r') as f:
-        KEY = f.readline()
+def set_key():
+    try:
+        with open('key.txt', 'r') as f:
+            KEY = f.readline()
 
-        key_check_url = f'https://api.hypixel.net/counts?key={KEY}'
-        key_check = getInfo(key_check_url)
-    f.close()
-
-    if key_check['success'] == False:
-        print("Invalid API key.")
-        with open('key.txt', 'w') as f:
-            f.write(input("Paste your API key: "))
+            key_check_url = f'https://api.hypixel.net/counts?key={KEY}'
+            key_check = getInfo(key_check_url)
         f.close()
-except Exception as e:
-    print(f"ERROR: {e}")
-    print("Invalid API key.")
-    with open('key.txt', 'w') as f:
+
+        with open('key.txt', 'w') as f:
+            if key_check['success'] == False:
+                print("Invalid API key.")
+                with open('key.txt', 'w') as f:
+                    f.write(input("Paste your API key: "))
+    except Exception as e:
+        print(f"ERROR: {e}")
+        print("Invalid API key.")
         f.write(input("Paste your API key: "))
 
     f.close()
 
-print("Welcome to HYOVERLAY!")
-print("Use '/bw' to check individual stats")
-print("Example: /bw Dewier WarOG")
+    print("Welcome to HYOVERLAY!")
+    print("Use '/bw' to check individual stats")
+    print("Example: /bw Dewier WarOG")
+
+set_key()
+
 
 def create_labels(name, star_color, fkdr):
     global row
