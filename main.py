@@ -43,9 +43,13 @@ close_button.pack(side=tk.RIGHT)
 root.bind("<Button-1>", start_drag) 
 root.bind("<B1-Motion>", do_drag)
 
+
+
+
 # Create the main content of the window
 content_frame = tk.Frame(root, bg='black')
 content_frame.pack(fill=tk.BOTH, expand=True)
+
 
 #Add column labels 
 labels = ["Name", "FKDR"] 
@@ -82,24 +86,27 @@ def set_key():
             key_check = getInfo(key_check_url)
         f.close()
 
-        with open('key.txt', 'w') as f:
-            if key_check['success'] == False:
-                print("Invalid API key.")
-                with open('key.txt', 'w') as f:
-                    f.write(input("Paste your API key: "))
+        if key_check['success'] == False:
+            print("Invalid API key. https://developer.hypixel.net/dashboard")
+            with open('key.txt', 'w') as f:
+                f.write(input("Paste your API key: "))
+            f.close()
+            set_key()
     except Exception as e:
         print(f"ERROR: {e}")
-        print("Invalid API key.")
-        f.write(input("Paste your API key: "))
+        print("Invalid API key. https://developer.hypixel.net/dashboard")
+        with open('key.txt', 'w') as f:
+            f.write(input("Paste your API key: "))
+        f.close()
+        set_key()
 
     f.close()
 
-    print("Welcome to HYOVERLAY!")
-    print("Use '/bw' to check individual stats")
-    print("Example: /bw Dewier WarOG")
 
 set_key()
-
+print("Welcome to HYOVERLAY!")
+print("Use '/bw' to check individual stats")
+print("Example: /bw Dewier WarOG")
 
 def create_labels(name, star_color, fkdr):
     global row
