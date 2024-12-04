@@ -78,6 +78,7 @@ def getInfo(call):
 
 # set api key
 def set_key():
+    global KEY
     try:
         with open('key.txt', 'r') as f:
             KEY = f.readline()
@@ -104,6 +105,7 @@ def set_key():
 
 
 set_key()
+
 print("Welcome to HYOVERLAY!")
 print("Use '/bw' to check individual stats")
 print("Example: /bw Dewier WarOG")
@@ -155,7 +157,8 @@ def getStats(user):
         except:
             bwfkdr = bwfinalkills
 
-    except:
+    except Exception as e:
+        print(e)
         print("User not found")
         ign = "NICK"
         star = 0
