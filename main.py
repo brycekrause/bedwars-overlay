@@ -53,10 +53,10 @@ content_frame.pack(fill=tk.BOTH, expand=True)
 
 #Add column labels 
 labels = ["Name", "FKDR"] 
-label1 = tk.Label(content_frame, text="Name", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
-label1.grid(row=0, column=0, padx=20, pady=10, sticky="w") 
-label2 = tk.Label(content_frame, text="FKDR", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
-label2.grid(row=0, column=1, padx=20, pady=10, sticky="e") 
+name_label = tk.Label(content_frame, text="Name", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+name_label.grid(row=0, column=0, padx=20, pady=10, sticky="w") 
+fkdr_label = tk.Label(content_frame, text="FKDR", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+fkdr_label.grid(row=0, column=1, padx=20, pady=10, sticky="e") 
 
 # Configure the grid to evenly space the columns 
 content_frame.grid_columnconfigure(0, weight=1) 
