@@ -20,7 +20,8 @@ def do_drag(event):
                   
 root = tk.Tk()
 root.title("HyOverlay")
-root.geometry("330x630")
+x, y = 330, 150
+root.geometry(f"{x}x{y}")
 
 # Make the window transparent
 root.attributes('-alpha', 0.8)
@@ -111,6 +112,9 @@ print("Example: /bw Dewier WarOG")
 def create_labels(name, star_color, fkdr):
     global row
 
+    y += 35
+    root.geometry(f"{x}x{y}")
+
     name_label = tk.Label(content_frame, text=name, fg=star_color, bg="black", font=("Helvetica", 12, 'bold')) 
     name_label.grid(row=row, column=0, padx=20, pady=5, sticky='w') 
 
@@ -125,6 +129,7 @@ def create_labels(name, star_color, fkdr):
 def delete_labels():
     for label in labels:
         label.destroy()
+        y -= 35
 
 def getStats(user):
     global row
