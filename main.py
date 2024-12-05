@@ -158,7 +158,7 @@ def getStats(user):
             bwfkdr = bwfinalkills
 
     except Exception as e:
-        print(e)
+        print("ERROR: " + e)
         print("User not found")
         ign = "NICK"
         star = 0
