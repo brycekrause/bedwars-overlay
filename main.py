@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import os
+from key import set_key
 
 #TODO: 
     # paste api key in gui rather than terminal
@@ -51,7 +52,7 @@ content_frame = tk.Frame(root, bg='black')
 content_frame.pack(fill=tk.BOTH, expand=True)
 
 
-#Add column labels 
+# Add column labels 
 labels = ["Name", "FKDR"] 
 name_label = tk.Label(content_frame, text="Name", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
 name_label.grid(row=0, column=0, padx=20, pady=10, sticky="w") 
@@ -68,6 +69,11 @@ import threading
 row = 1
 labels = []
 
+KEY = set_key()
+print("Welcome to HYOVERLAY!")
+print("Use '/bw' to check individual stats")
+print("Example: /bw Dewier WarOG")
+
 def getInfo(call):
   call = call.rstrip("\n")
   call = call.rstrip("')")
@@ -75,40 +81,6 @@ def getInfo(call):
   if r.status_code == 204:
     return {'name': 'Null'}
   return r.json()
-
-# set api key
-def set_key():
-    global KEY
-    try:
-        with open('key.txt', 'r') as f:
-            KEY = f.readline()
-
-            key_check_url = f'https://api.hypixel.net/counts?key={KEY}'
-            key_check = getInfo(key_check_url)
-        f.close()
-
-        if key_check['success'] == False:
-            print("Invalid API key. https://developer.hypixel.net/dashboard")
-            with open('key.txt', 'w') as f:
-                f.write(input("Paste your API key: "))
-            f.close()
-            set_key()
-    except Exception as e:
-        print(f"ERROR: {e}")
-        print("Invalid API key. https://developer.hypixel.net/dashboard")
-        with open('key.txt', 'w') as f:
-            f.write(input("Paste your API key: "))
-        f.close()
-        set_key()
-
-    f.close()
-
-
-set_key()
-
-print("Welcome to HYOVERLAY!")
-print("Use '/bw' to check individual stats")
-print("Example: /bw Dewier WarOG")
 
 def create_labels(name, star_color, fkdr):
     global row
