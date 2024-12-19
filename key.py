@@ -6,13 +6,20 @@ import requests
 #TODO:
     # Add popup window for setting the key!
 
-def createWindow():
+def createWindow(callback):
     keyWindow = tk.Tk()
     keyWindow.title("Set API Key")
     keyWindow.geometry("300x300")
 
     def close_window():
         keyWindow.destroy()
+        callback()
+    
+    def submit():
+        KEY = str(key_entry.get())
+        with open('key.txt', 'w') as f:
+            f.write(KEY)
+        close_window()
 
     def start_drag(event): 
         keyWindow.x = event.x 
@@ -51,47 +58,14 @@ def createWindow():
     key_entry = tk.Entry(content_frame, width=40)
     key_entry.pack(pady=10)
 
-    submit_button = tk.Button(content_frame, text="Submit", command=close_window)
+    submit_button = tk.Button(content_frame, text="Submit", command=submit)
     submit_button.pack(pady=10)
 
     keyWindow.mainloop()
-
-    return key_entry.get()
+    return
 
 def getInfo(call):
   r = requests.get(call)
   if r.status_code == 204:
     return {'name': 'Null'}
   return r.json()
-
-def set_key():
-    global KEY
-    try:
-        with open('key.txt', 'r') as f:
-            KEY = f.readline()
-
-            key_check_url = f'https://api.hypixel.net/counts?key={KEY}'
-            key_check = getInfo(key_check_url)
-        f.close()
-
-        if key_check['success'] == False:
-            KEY = createWindow()
-            print(KEY)
-            print("Invalid API key. https://developer.hypixel.net/dashboard")
-            with open('key.txt', 'w') as f:
-                f.write(input("Paste your API key: "))
-            f.close()
-            set_key()
-    except Exception as e:
-        KEY = createWindow()
-        print(KEY)
-        print(f"ERROR: {e}")
-        print("Invalid API key. https://developer.hypixel.net/dashboard")
-        with open('key.txt', 'w') as f:
-            f.write(input("Paste your API key: "))
-        f.close()
-        set_key()
-
-    f.close()
-
-    return(KEY)

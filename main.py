@@ -1,78 +1,78 @@
 import tkinter as tk
 from tkinter import ttk
 import os
-from key import set_key
+from key import createWindow
 
 #TODO: 
     # paste api key in gui rather than terminal
 
+def overlayWindow():
+    global content_frame
+    def close_window():
+        root.destroy()
 
-def close_window():
-    root.destroy()
+    def start_drag(event): 
+        root.x = event.x 
+        root.y = event.y 
 
-def start_drag(event): 
-    root.x = event.x 
-    root.y = event.y 
+    def do_drag(event): 
+        deltax = event.x - root.x 
+        deltay = event.y - root.y 
+        root.geometry(f"+{root.winfo_x() + deltax}+{root.winfo_y() + deltay}")
 
-def do_drag(event): 
-    deltax = event.x - root.x 
-    deltay = event.y - root.y 
-    root.geometry(f"+{root.winfo_x() + deltax}+{root.winfo_y() + deltay}")
-                  
-root = tk.Tk()
-root.title("HyOverlay")
-root.geometry("330x630")
+    root = tk.Tk()
+    root.title("HyOverlay")
+    root.geometry("330x630")
 
-# Make the window transparent
-root.attributes('-alpha', 0.8)
+    # Make the window transparent
+    root.attributes('-alpha', 0.8)
 
-# Remove all window decorations (including title bar)
-root.overrideredirect(True)
+    # Remove all window decorations (including title bar)
+    root.overrideredirect(True)
 
-# Always on top
-root.attributes('-topmost', True)
+    # Always on top
+    root.attributes('-topmost', True)
 
-# Add a frame to act as the window's header
-header_frame = tk.Frame(root, bg='black', relief='raised', bd=0)
-header_frame.pack(fill=tk.X)
+    # Add a frame to act as the window's header
+    header_frame = tk.Frame(root, bg='black', relief='raised', bd=0)
+    header_frame.pack(fill=tk.X)
 
-# Add buttons to the header frame
-close_button = tk.Button(header_frame, text='X', bg="black", fg="white", highlightthickness=0, bd=0, command=close_window)
-close_button.pack(side=tk.RIGHT)
+    # Add buttons to the header frame
+    close_button = tk.Button(header_frame, text='X', bg="black", fg="white", highlightthickness=0, bd=0, command=close_window)
+    close_button.pack(side=tk.RIGHT)
 
-# Bind the header frame to the drag functions 
-root.bind("<Button-1>", start_drag) 
-root.bind("<B1-Motion>", do_drag)
-
-
-
-
-# Create the main content of the window
-content_frame = tk.Frame(root, bg='black')
-content_frame.pack(fill=tk.BOTH, expand=True)
+    # Bind the header frame to the drag functions 
+    root.bind("<Button-1>", start_drag) 
+    root.bind("<B1-Motion>", do_drag)
 
 
-# Add column labels 
-labels = ["Name", "FKDR"] 
-name_label = tk.Label(content_frame, text="Name", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
-name_label.grid(row=0, column=0, padx=20, pady=10, sticky="w") 
-fkdr_label = tk.Label(content_frame, text="FKDR", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
-fkdr_label.grid(row=0, column=1, padx=20, pady=10, sticky="e") 
 
-# Configure the grid to evenly space the columns 
-content_frame.grid_columnconfigure(0, weight=1) 
-content_frame.grid_columnconfigure(1, weight=1) 
+
+    # Create the main content of the window
+    content_frame = tk.Frame(root, bg='black')
+    content_frame.pack(fill=tk.BOTH, expand=True)
+
+    # Add column labels 
+    labels = ["Name", "FKDR"] 
+    name_label = tk.Label(content_frame, text="Name", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+    name_label.grid(row=0, column=0, padx=20, pady=10, sticky="w") 
+    fkdr_label = tk.Label(content_frame, text="FKDR", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+    fkdr_label.grid(row=0, column=1, padx=20, pady=10, sticky="e") 
+
+    # Configure the grid to evenly space the columns 
+    content_frame.grid_columnconfigure(0, weight=1) 
+    content_frame.grid_columnconfigure(1, weight=1) 
+
+    root.mainloop()
+
+
+
 
 import requests
 import threading
 
 row = 1
 labels = []
-
-KEY = set_key()
-print("Welcome to HYOVERLAY!")
-print("Use '/bw' to check individual stats")
-print("Example: /bw Dewier WarOG")
 
 def getInfo(call):
   call = call.rstrip("\n")
@@ -81,6 +81,26 @@ def getInfo(call):
   if r.status_code == 204:
     return {'name': 'Null'}
   return r.json()
+
+def callback():
+    set_key()
+
+def set_key():
+    global KEY
+    try:
+        with open('key.txt', 'r') as f:
+            KEY = f.readline()
+
+            key_check_url = f'https://api.hypixel.net/counts?key={KEY}'
+            key_check = getInfo(key_check_url)
+        f.close()
+
+        if key_check['success'] == False:
+            createWindow(set_key)
+    except Exception as e:
+        createWindow(set_key)
+
+
 
 def create_labels(name, star_color, fkdr):
     global row
@@ -99,6 +119,7 @@ def create_labels(name, star_color, fkdr):
 def delete_labels():
     for label in labels:
         label.destroy()
+
 
 def getStats(user):
     global row
@@ -130,7 +151,7 @@ def getStats(user):
             bwfkdr = bwfinalkills
 
     except Exception as e:
-        print("ERROR: " + e)
+        print("ERROR: " + str(e))
         print("User not found")
         ign = "NICK"
         star = 0
@@ -200,4 +221,5 @@ def start_threading():
 
 start_threading()
 
-root.mainloop()
+threading.Thread(target=overlayWindow).start()
+set_key()
