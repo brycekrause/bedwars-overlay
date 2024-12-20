@@ -63,6 +63,11 @@ def overlayWindow():
     fkdr_label = tk.Label(content_frame, text="FKDR", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
     fkdr_label.grid(row=0, column=1, padx=20, pady=10, sticky="e") 
 
+    apiSuccess_label = tk.Label(content_frame, text="API key set successfully!", fg='lightgreen', bg="black", font=("Helvetica", 12, 'bold')) 
+    apiSuccess_label.grid(row=1, column=0, padx=20, pady=10, sticky="e") 
+
+    root.after(3000, apiSuccess_label.destroy)
+
     # Configure the grid to evenly space the columns 
     content_frame.grid_columnconfigure(0, weight=1) 
     content_frame.grid_columnconfigure(1, weight=1) 
@@ -101,7 +106,7 @@ def set_key():
 
         if key_check['success'] == False:
             apiWindow(set_key)
-    except Exception as e:
+    except Exception:
         apiWindow(set_key)
 
     overlayWindow()
@@ -208,9 +213,9 @@ def command_detected(players_arr):
     eta = f"{round(player_count * 0.4, 2)}s"
 
     wait_label = tk.Label(content_frame, text=f"Gathering data..." , fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
-    wait_label.grid(row=row, column=1, padx=20, pady=5, sticky='e')
+    wait_label.grid(row=row, column=0, padx=20, pady=5, sticky='e')
     eta_label = tk.Label(content_frame, text=f"ETA: {eta}" , fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
-    eta_label.grid(row=row+1, column=1, padx=20, pady=5, sticky='e')
+    eta_label.grid(row=row+1, column=0, padx=20, pady=5, sticky='e')
 
     labels.append(wait_label)
     labels.append(eta_label)
