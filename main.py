@@ -121,9 +121,15 @@ def delete_labels():
     for label in labels:
         label.destroy()
 
+def sortPlayers(statsArr):
+    statsArr.sort(key=lambda x: x['bwfkdr'], reverse=True)
+    for player in statsArr:
+        create_labels(player['name'], player['star_color'], player['bwfkdr'])
 
+
+statsArr = []
 def getStats(user):
-    global row
+    global row, statsArr
     mojangurl = "https://api.mojang.com/users/profiles/minecraft/" + user
     mojanginfo = getInfo(mojangurl)
     try:
@@ -183,7 +189,13 @@ def getStats(user):
     elif star >= 1000:
         star_color = "#FFFF55"
 
-    create_labels(name, star_color, bwfkdr)
+    statsArr.append(
+        {
+            "name": name,
+            "star_color": star_color,
+            "bwfkdr": bwfkdr
+        }
+    )
 
 home_directory = os.path.expanduser("~")
 name = os.path.basename(home_directory) 
@@ -192,28 +204,46 @@ client = '.lunarclient'
 
 logs = f"C:/Users/{name}/{client}/offline/multiver/logs/latest.log"
 
+def command_detected(players_arr):
+    global row, statsArr
+    row = 1
+    delete_labels()
+    statsArr = []
+
+    player_count = len(players_arr)
+    eta = f"{round(player_count * 0.8, 2)}s"
+
+    wait_label = tk.Label(content_frame, text=f"Gathering data..." , fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+    wait_label.grid(row=row, column=1, padx=20, pady=5, sticky='e')
+    eta_label = tk.Label(content_frame, text=f"ETA: {eta}" , fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+    eta_label.grid(row=row+1, column=1, padx=20, pady=5, sticky='e')
+
+    labels.append(wait_label)
+    labels.append(eta_label)
+
+    for player in players_arr:
+        getStats(player)
+
+    delete_labels()
+    row = 1
+    sortPlayers(statsArr)
+
+
 def log_monitor():
-    global row
+    global row, statsArr
 
     with open(logs, 'r') as file:
         file.seek(0, 2)
         while True:
             line = file.readline()
             if "ONLINE:" in line:
-                print("/who detected")
                 players = line.split("ONLINE: ")[1]
                 players_arr = players.split(", ")
-                row = 1
-                delete_labels()
-                for x in players_arr:
-                    getStats(x)
-            elif "('bw" in line:
+                command_detected(players_arr)
+            elif "('bw " in line:
                 players = line.split("('bw ")[1]
                 players_arr = players.split(" ")
-                row = 1
-                delete_labels()
-                for x in players_arr:
-                    getStats(x)
+                command_detected(players_arr)
 
 
 def start_threading():
