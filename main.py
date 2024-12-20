@@ -3,8 +3,12 @@ from tkinter import ttk
 import os
 from key import apiWindow
 
-#TODO: 
-    # paste api key in gui rather than terminal
+# Get the path to the latest.log file
+home_directory = os.path.expanduser("~")
+name = os.path.basename(home_directory) 
+client = '.lunarclient'
+logs = f"C:/Users/{name}/{client}/offline/multiver/logs/latest.log"
+
 
 def overlayWindow():
     global content_frame
@@ -126,7 +130,6 @@ def sortPlayers(statsArr):
     for player in statsArr:
         create_labels(player['name'], player['star_color'], player['bwfkdr'])
 
-
 statsArr = []
 def getStats(user):
     global row, statsArr
@@ -158,8 +161,6 @@ def getStats(user):
             bwfkdr = bwfinalkills
 
     except Exception as e:
-        print("ERROR: " + str(e))
-        print("User not found")
         ign = "NICK"
         star = 0
         bwfkdr = 0
@@ -197,21 +198,14 @@ def getStats(user):
         }
     )
 
-home_directory = os.path.expanduser("~")
-name = os.path.basename(home_directory) 
-
-client = '.lunarclient'
-
-logs = f"C:/Users/{name}/{client}/offline/multiver/logs/latest.log"
-
 def command_detected(players_arr):
-    global row, statsArr
+    global row, statsArr, start_time
     row = 1
     delete_labels()
     statsArr = []
 
     player_count = len(players_arr)
-    eta = f"{round(player_count * 0.8, 2)}s"
+    eta = f"{round(player_count * 0.4, 2)}s"
 
     wait_label = tk.Label(content_frame, text=f"Gathering data..." , fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
     wait_label.grid(row=row, column=1, padx=20, pady=5, sticky='e')
