@@ -3,10 +3,7 @@ from tkinter import ttk
 import os
 import requests
 
-#TODO:
-    # Add popup window for setting the key!
-
-def createWindow(callback):
+def apiWindow(callback):
     keyWindow = tk.Tk()
     keyWindow.title("Set API Key")
     keyWindow.geometry("300x300")
@@ -35,6 +32,9 @@ def createWindow(callback):
 
     # Remove all window decorations (including title bar)
     keyWindow.overrideredirect(True)
+
+    # Always on top
+    keyWindow.attributes('-topmost', True)
 
     # Add a frame to act as the window's header
     header_frame = tk.Frame(keyWindow, bg='black', relief='raised', bd=0)

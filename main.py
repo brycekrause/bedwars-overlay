@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import os
-from key import createWindow
+from key import apiWindow
 
 #TODO: 
     # paste api key in gui rather than terminal
@@ -96,15 +96,16 @@ def set_key():
         f.close()
 
         if key_check['success'] == False:
-            createWindow(set_key)
+            apiWindow(set_key)
     except Exception as e:
-        createWindow(set_key)
+        apiWindow(set_key)
+
+    overlayWindow()
 
 
 
 def create_labels(name, star_color, fkdr):
     global row
-
     name_label = tk.Label(content_frame, text=name, fg=star_color, bg="black", font=("Helvetica", 12, 'bold')) 
     name_label.grid(row=row, column=0, padx=20, pady=5, sticky='w') 
 
@@ -199,6 +200,7 @@ def log_monitor():
         while True:
             line = file.readline()
             if "ONLINE:" in line:
+                print("/who detected")
                 players = line.split("ONLINE: ")[1]
                 players_arr = players.split(", ")
                 row = 1
@@ -220,6 +222,4 @@ def start_threading():
     thread.start()
 
 start_threading()
-
-threading.Thread(target=overlayWindow).start()
 set_key()
