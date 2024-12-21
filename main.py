@@ -10,6 +10,8 @@ client = '.lunarclient'
 logs = f"C:/Users/{name}/{client}/offline/multiver/logs/latest.log"
 
 
+danger_icon = "⚠︎" #⚠️
+
 def overlayWindow():
     global content_frame
     def close_window():
@@ -57,7 +59,6 @@ def overlayWindow():
     content_frame.pack(fill=tk.BOTH, expand=True)
 
     # Add column labels 
-    labels = ["Name", "FKDR"] 
     name_label = tk.Label(content_frame, text="Name", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
     name_label.grid(row=0, column=0, padx=20, pady=10, sticky="w") 
     fkdr_label = tk.Label(content_frame, text="FKDR", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
@@ -115,13 +116,23 @@ def set_key():
 
 def create_labels(name, star_color, fkdr):
     global row
-    name_label = tk.Label(content_frame, text=name, fg=star_color, bg="black", font=("Helvetica", 12, 'bold')) 
-    name_label.grid(row=row, column=0, padx=20, pady=5, sticky='w') 
+    #name_label = tk.Label(content_frame, text=name, fg=star_color, bg="black", font=("Helvetica", 12, 'bold')) 
+    #name_label.grid(row=row, column=0, padx=20, pady=5, sticky='w') 
+
+    name_text = tk.Text(content_frame, height=1, width=20, fg=star_color, bg="black", font=("Helvetica", 12, 'bold'))
+    name_text.insert(tk.END, f"{name}", ("white",))
+    if fkdr == 0 or name == "NICK" or fkdr >= 8:
+        name_text.insert(tk.END, f"{danger_icon}", ("red",))
+    name_text.tag_config("red", foreground="red")
+    name_text.tag_config("white", foreground="white")
+    name_text.grid(row=row, column=0, padx=20, pady=5, sticky='w')
+    name_text.config(state=tk.DISABLED)
+    
 
     fkdr_label = tk.Label(content_frame, text=fkdr, fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
     fkdr_label.grid(row=row, column=1, padx=20, pady=5, sticky='e')
 
-    labels.append(name_label)
+    labels.append(name_text)
     labels.append(fkdr_label)
 
     row += 1
