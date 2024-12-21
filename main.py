@@ -249,10 +249,11 @@ def log_monitor():
                 players_arr = players.split(", ")
                 command_detected(players_arr)
             elif ("('bw " and "')") in line:
-                print(line)
-                players = line.split("('bw ")[1]
-                players_arr = players.split(" ")
-                command_detected(players_arr)
+                try:
+                    players = line.split("('bw ")[1].split("')")[0].split(" ")
+                    command_detected(players)
+                except IndexError as e:
+                    pass
 
 #line 247, in log_monitor
 #    players = line.split("('bw ")[1]
