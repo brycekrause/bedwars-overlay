@@ -116,19 +116,22 @@ def set_key():
 
 
 
-def create_labels(name, star_color, fkdr):
+def create_labels(name, star_color, fkdr, unknown):
     global row
 
     name_label = tk.Label(content_frame, text=name, fg=star_color, bg="black", font=("Helvetica", 12, 'bold')) 
     name_label.grid(row=row, column=0, padx=20, pady=5, sticky='w') 
-    print(f'{name} - {fkdr}')
-    if fkdr == 0 or name == "NICK" or fkdr >= 8:
+
+    if fkdr >= 8:
         danger_label = tk.Label(content_frame, text=f"{danger_icon}", fg='red', bg="black", font=("Helvetica", 12, 'bold'))
         danger_label.grid(row=row, column=1, padx=0, pady=5, sticky='w')
     else:
-        danger_label = tk.Label(content_frame, text="", fg='red', bg="black", font=("Helvetica", 12, 'bold'))
-        danger_label.grid(row=row, column=1, padx=0, pady=5, sticky='w')
-    
+        if unknown:
+            danger_label = tk.Label(content_frame, text="⍰", fg='yellow', bg="black", font=("Helvetica", 12, 'bold'))
+            danger_label.grid(row=row, column=1, padx=0, pady=5, sticky='w')
+        else:
+            danger_label = tk.Label(content_frame, text="", fg='red', bg="black", font=("Helvetica", 12, 'bold'))
+            danger_label.grid(row=row, column=1, padx=0, pady=5, sticky='w')
 
     fkdr_label = tk.Label(content_frame, text=fkdr, fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
     fkdr_label.grid(row=row, column=2, padx=20, pady=5, sticky='e')
@@ -144,9 +147,9 @@ def delete_labels():
         label.destroy()
 
 def sortPlayers(statsArr):
-    statsArr.sort(key=lambda x: x['bwfkdr'], reverse=True)
+    statsArr.sort(key=lambda x: x['bwfkdr'], reverse=True) # change this
     for player in statsArr:
-        create_labels(player['name'], player['star_color'], player['bwfkdr'])
+        create_labels(player['name'], player['star_color'], player['bwfkdr'], player['unknown'])
 
 statsArr = []
 def getStats(user):
@@ -157,31 +160,22 @@ def getStats(user):
         uuid = mojanginfo["id"]
         hypixelurl = f"https://api.hypixel.net/player?key={KEY}&uuid=" + uuid
         hypixelinfo = getInfo(hypixelurl)
-        try:
-            ign = hypixelinfo['player']['displayname']
-        except:
-            ign = "NICK"
-        try:
-            star = hypixelinfo['player']['achievements']['bedwars_level']
-        except:
-            star = 0
-        try:
-            bwfinalkills = hypixelinfo['player']['stats']['Bedwars']['final_kills_bedwars']
-        except:
-            bwfinalkills = 0
-        try:
-            bwfinaldeaths = hypixelinfo['player']['stats']['Bedwars']['final_deaths_bedwars']
-        except:
-            bwfinaldeaths = 0
+        
+        unknown = False
+        ign = hypixelinfo['player']['displayname']
+        star = hypixelinfo['player']['achievements']['bedwars_level']
+        bwfinalkills = hypixelinfo['player']['stats']['Bedwars']['final_kills_bedwars']
+        bwfinaldeaths = hypixelinfo['player']['stats']['Bedwars']['final_deaths_bedwars']
         try:
             bwfkdr = round(bwfinalkills / bwfinaldeaths, 2)
-        except:
+        except ZeroDivisionError:
             bwfkdr = bwfinalkills
 
     except Exception as e:
-        ign = "NICK"
+        ign = user.replace("')", "")
         star = 0
         bwfkdr = 0
+        unknown = True
 
     name = f"[{star}✫] {ign}"
 
@@ -212,7 +206,8 @@ def getStats(user):
         {
             "name": name,
             "star_color": star_color,
-            "bwfkdr": bwfkdr
+            "bwfkdr": bwfkdr,
+            "unknown": unknown
         }
     )
 
@@ -234,7 +229,6 @@ def command_detected(players_arr):
     labels.append(eta_label)
 
     for player in players_arr:
-        print(player)
         getStats(player)
 
     delete_labels()
@@ -254,11 +248,16 @@ def log_monitor():
                 players = line.split("ONLINE: ")[1]
                 players_arr = players.split(", ")
                 command_detected(players_arr)
-            elif "('bw " in line:
+            elif ("('bw " and "')") in line:
                 print(line)
                 players = line.split("('bw ")[1]
                 players_arr = players.split(" ")
                 command_detected(players_arr)
+
+#line 247, in log_monitor
+#    players = line.split("('bw ")[1]
+#              ~~~~~~~~~~~~~~~~~~~^^^
+#IndexError: list index out of range
 
 
 def start_threading():
