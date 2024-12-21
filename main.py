@@ -60,9 +60,10 @@ def overlayWindow():
 
     # Add column labels 
     name_label = tk.Label(content_frame, text="Name", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
-    name_label.grid(row=0, column=0, padx=20, pady=10, sticky="w") 
+    name_label.grid(row=0, column=0, padx=20, pady=10, sticky="w")   
     fkdr_label = tk.Label(content_frame, text="FKDR", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
-    fkdr_label.grid(row=0, column=1, padx=20, pady=10, sticky="e") 
+    fkdr_label.grid(row=0, column=2, padx=20, pady=10, sticky="e") 
+
 
     apiSuccess_label = tk.Label(content_frame, text="API key set successfully!", fg='lightgreen', bg="black", font=("Helvetica", 12, 'bold')) 
     apiSuccess_label.grid(row=1, column=0, padx=20, pady=10, sticky="e") 
@@ -70,8 +71,9 @@ def overlayWindow():
     root.after(3000, apiSuccess_label.destroy)
 
     # Configure the grid to evenly space the columns 
-    content_frame.grid_columnconfigure(0, weight=1) 
-    content_frame.grid_columnconfigure(1, weight=1) 
+    content_frame.grid_columnconfigure(0, weight=1)
+    content_frame.grid_columnconfigure(1, weight=0) 
+    content_frame.grid_columnconfigure(2, weight=1) 
 
     root.mainloop()
 
@@ -116,23 +118,23 @@ def set_key():
 
 def create_labels(name, star_color, fkdr):
     global row
-    #name_label = tk.Label(content_frame, text=name, fg=star_color, bg="black", font=("Helvetica", 12, 'bold')) 
-    #name_label.grid(row=row, column=0, padx=20, pady=5, sticky='w') 
 
-    name_text = tk.Text(content_frame, height=1, width=20, fg=star_color, bg="black", font=("Helvetica", 12, 'bold'))
-    name_text.insert(tk.END, f"{name}", ("white",))
+    name_label = tk.Label(content_frame, text=name, fg=star_color, bg="black", font=("Helvetica", 12, 'bold')) 
+    name_label.grid(row=row, column=0, padx=20, pady=5, sticky='w') 
+    print(f'{name} - {fkdr}')
     if fkdr == 0 or name == "NICK" or fkdr >= 8:
-        name_text.insert(tk.END, f"{danger_icon}", ("red",))
-    name_text.tag_config("red", foreground="red")
-    name_text.tag_config("white", foreground="white")
-    name_text.grid(row=row, column=0, padx=20, pady=5, sticky='w')
-    name_text.config(state=tk.DISABLED)
+        danger_label = tk.Label(content_frame, text=f"{danger_icon}", fg='red', bg="black", font=("Helvetica", 12, 'bold'))
+        danger_label.grid(row=row, column=1, padx=0, pady=5, sticky='w')
+    else:
+        danger_label = tk.Label(content_frame, text="", fg='red', bg="black", font=("Helvetica", 12, 'bold'))
+        danger_label.grid(row=row, column=1, padx=0, pady=5, sticky='w')
     
 
     fkdr_label = tk.Label(content_frame, text=fkdr, fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
-    fkdr_label.grid(row=row, column=1, padx=20, pady=5, sticky='e')
+    fkdr_label.grid(row=row, column=2, padx=20, pady=5, sticky='e')
 
-    labels.append(name_text)
+    labels.append(name_label)
+    labels.append(danger_label)
     labels.append(fkdr_label)
 
     row += 1
@@ -222,7 +224,7 @@ def command_detected(players_arr):
 
     player_count = len(players_arr)
     eta = f"{round(player_count * 0.4, 2)}s"
-
+    print(f"ETA: {eta}")
     wait_label = tk.Label(content_frame, text=f"Gathering data..." , fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
     wait_label.grid(row=row, column=0, padx=20, pady=5, sticky='e')
     eta_label = tk.Label(content_frame, text=f"ETA: {eta}" , fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
@@ -232,6 +234,7 @@ def command_detected(players_arr):
     labels.append(eta_label)
 
     for player in players_arr:
+        print(player)
         getStats(player)
 
     delete_labels()
@@ -247,10 +250,12 @@ def log_monitor():
         while True:
             line = file.readline()
             if "ONLINE:" in line:
+                print(line)
                 players = line.split("ONLINE: ")[1]
                 players_arr = players.split(", ")
                 command_detected(players_arr)
             elif "('bw " in line:
+                print(line)
                 players = line.split("('bw ")[1]
                 players_arr = players.split(" ")
                 command_detected(players_arr)
