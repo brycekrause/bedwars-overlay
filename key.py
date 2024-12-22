@@ -10,7 +10,7 @@ def apiWindow(callback):
 
     def close_window():
         keyWindow.destroy()
-        callback()
+        return
     
     def submit():
         KEY = str(key_entry.get())
