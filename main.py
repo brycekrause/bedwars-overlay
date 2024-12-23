@@ -133,21 +133,21 @@ def create_labels(name, star_color, ws, fkdr, wlr, unknown):
 
     if fkdr >= 8:
         danger_label = tk.Label(content_frame, text=f"{danger_icon}", fg='red', bg="black", font=("Helvetica", 12, 'bold'))
-        danger_label.grid(row=row, column=1, padx=0, pady=5, sticky='w')
+        danger_label.grid(row=row, column=1, padx=20, pady=5, sticky='w')
     else:
         if unknown:
             danger_label = tk.Label(content_frame, text="⍰", fg='yellow', bg="black", font=("Helvetica", 12, 'bold'))
-            danger_label.grid(row=row, column=1, padx=0, pady=5, sticky='w')
+            danger_label.grid(row=row, column=1, padx=20, pady=5, sticky='w')
         else:
             danger_label = tk.Label(content_frame, text="", fg='red', bg="black", font=("Helvetica", 12, 'bold'))
-            danger_label.grid(row=row, column=1, padx=0, pady=5, sticky='w')
+            danger_label.grid(row=row, column=1, padx=20, pady=5, sticky='w')
 
     ws_label = tk.Label(content_frame, text=ws, fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
-    ws_label.grid(row=row, column=2, padx=20, pady=5, sticky='e')
+    ws_label.grid(row=row, column=2, padx=20, pady=5)
     fkdr_label = tk.Label(content_frame, text=fkdr, fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
-    fkdr_label.grid(row=row, column=3, padx=20, pady=5, sticky='e')
+    fkdr_label.grid(row=row, column=3, padx=20, pady=5)
     wlr_label = tk.Label(content_frame, text=wlr, fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
-    wlr_label.grid(row=row, column=4, padx=20, pady=5, sticky='e')
+    wlr_label.grid(row=row, column=4, padx=20, pady=5)
 
     labels.append(name_label)
     labels.append(danger_label)
@@ -162,9 +162,9 @@ def delete_labels():
         label.destroy()
 
 def sortPlayers(statsArr):
-    statsArr.sort(key=lambda x: x['bwfkdr'], reverse=True) # change this
+    statsArr.sort(key=lambda x: x['fkdr'], reverse=True) # change this
     for player in statsArr:
-        create_labels(player['name'], player['star_color'], player['ws'], player['bwfkdr'], player['wlr'], player['unknown'])
+        create_labels(player['name'], player['star_color'], player['ws'], player['fkdr'], player['wlr'], player['unknown'])
 
 def command_detected(players_arr):
     global row, statsArr, start_time
