@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import os
 from key import apiWindow
+from getStats import getStats
 
 # Get the path to the latest.log file
 home_directory = os.path.expanduser("~")
@@ -28,7 +29,7 @@ def overlayWindow():
 
     root = tk.Tk()
     root.title("HyOverlay")
-    root.geometry("330x630")
+    root.geometry("580x630")
 
     # Make the window transparent
     root.attributes('-alpha', 0.8)
@@ -59,10 +60,16 @@ def overlayWindow():
     content_frame.pack(fill=tk.BOTH, expand=True)
 
     # Add column labels 
-    name_label = tk.Label(content_frame, text="Name", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+    name_label = tk.Label(content_frame, text="NAME", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
     name_label.grid(row=0, column=0, padx=20, pady=10, sticky="w")   
-    fkdr_label = tk.Label(content_frame, text="FKDR", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
-    fkdr_label.grid(row=0, column=2, padx=20, pady=10, sticky="e") 
+    tag_label =  tk.Label(content_frame, text="TAG", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+    tag_label.grid(row=0, column=1, padx=20, pady=10, sticky="w")   
+    ws_title_label =  tk.Label(content_frame, text="WS", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+    ws_title_label.grid(row=0, column=2, padx=20, pady=10, sticky="w")   
+    fkdr_title_label = tk.Label(content_frame, text="FKDR", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+    fkdr_title_label.grid(row=0, column=3, padx=20, pady=10, sticky="e") 
+    wlr_title_label = tk.Label(content_frame, text="WLR", fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+    wlr_title_label.grid(row=0, column=4, padx=20, pady=10, sticky="e") 
 
 
     apiSuccess_label = tk.Label(content_frame, text="API key set successfully!", fg='lightgreen', bg="black", font=("Helvetica", 12, 'bold')) 
@@ -71,9 +78,11 @@ def overlayWindow():
     root.after(3000, apiSuccess_label.destroy)
 
     # Configure the grid to evenly space the columns 
-    content_frame.grid_columnconfigure(0, weight=1)
-    content_frame.grid_columnconfigure(1, weight=0) 
-    content_frame.grid_columnconfigure(2, weight=1) 
+    content_frame.grid_columnconfigure(0, weight=2) # Name
+    content_frame.grid_columnconfigure(1, weight=1) # Tag
+    content_frame.grid_columnconfigure(2, weight=1) # WS
+    content_frame.grid_columnconfigure(3, weight=1) # FKDR
+    content_frame.grid_columnconfigure(4, weight=1) # WLR
 
     root.mainloop()
 
@@ -116,7 +125,7 @@ def set_key():
 
 
 
-def create_labels(name, star_color, fkdr, unknown):
+def create_labels(name, star_color, ws, fkdr, wlr, unknown):
     global row
 
     name_label = tk.Label(content_frame, text=name, fg=star_color, bg="black", font=("Helvetica", 12, 'bold')) 
@@ -133,12 +142,18 @@ def create_labels(name, star_color, fkdr, unknown):
             danger_label = tk.Label(content_frame, text="", fg='red', bg="black", font=("Helvetica", 12, 'bold'))
             danger_label.grid(row=row, column=1, padx=0, pady=5, sticky='w')
 
+    ws_label = tk.Label(content_frame, text=ws, fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+    ws_label.grid(row=row, column=2, padx=20, pady=5, sticky='e')
     fkdr_label = tk.Label(content_frame, text=fkdr, fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
-    fkdr_label.grid(row=row, column=2, padx=20, pady=5, sticky='e')
+    fkdr_label.grid(row=row, column=3, padx=20, pady=5, sticky='e')
+    wlr_label = tk.Label(content_frame, text=wlr, fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+    wlr_label.grid(row=row, column=4, padx=20, pady=5, sticky='e')
 
     labels.append(name_label)
     labels.append(danger_label)
+    labels.append(ws_label)
     labels.append(fkdr_label)
+    labels.append(wlr_label)
 
     row += 1
 
@@ -149,67 +164,7 @@ def delete_labels():
 def sortPlayers(statsArr):
     statsArr.sort(key=lambda x: x['bwfkdr'], reverse=True) # change this
     for player in statsArr:
-        create_labels(player['name'], player['star_color'], player['bwfkdr'], player['unknown'])
-
-statsArr = []
-def getStats(user):
-    global row, statsArr
-    mojangurl = "https://api.mojang.com/users/profiles/minecraft/" + user
-    mojanginfo = getInfo(mojangurl)
-    try:
-        uuid = mojanginfo["id"]
-        hypixelurl = f"https://api.hypixel.net/player?key={KEY}&uuid=" + uuid
-        hypixelinfo = getInfo(hypixelurl)
-        
-        unknown = False
-        ign = hypixelinfo['player']['displayname']
-        star = hypixelinfo['player']['achievements']['bedwars_level']
-        bwfinalkills = hypixelinfo['player']['stats']['Bedwars']['final_kills_bedwars']
-        bwfinaldeaths = hypixelinfo['player']['stats']['Bedwars']['final_deaths_bedwars']
-        try:
-            bwfkdr = round(bwfinalkills / bwfinaldeaths, 2)
-        except ZeroDivisionError:
-            bwfkdr = bwfinalkills
-
-    except Exception as e:
-        ign = user.replace("')", "")
-        star = 0
-        bwfkdr = 0
-        unknown = True
-
-    name = f"[{star}✫] {ign}"
-
-    if star <= 99:
-        star_color = "#AAAAAA"
-    elif star >= 100 and star <= 199:
-        star_color = "#FFFFFF"
-    elif star >= 200 and star <= 299:
-        star_color = "#FFAA00"
-    elif star >= 300 and star <= 399:
-        star_color = "#55FFFF"
-    elif star >= 400 and star <= 499:
-        star_color = "#00AA00"
-    elif star >= 500 and star <= 599:
-        star_color = "#00AAAA"
-    elif star >= 600 and star <= 699:
-        star_color = "#AA0000"
-    elif star >= 700 and star <= 799:
-        star_color = "#FF55FF"
-    elif star >= 800 and star <= 899:
-        star_color = "#5555FF"
-    elif star >= 900 and star <= 999:
-        star_color = "#AA00AA"
-    elif star >= 1000:
-        star_color = "#FFFF55"
-
-    statsArr.append(
-        {
-            "name": name,
-            "star_color": star_color,
-            "bwfkdr": bwfkdr,
-            "unknown": unknown
-        }
-    )
+        create_labels(player['name'], player['star_color'], player['ws'], player['bwfkdr'], player['wlr'], player['unknown'])
 
 def command_detected(players_arr):
     global row, statsArr, start_time
@@ -229,7 +184,7 @@ def command_detected(players_arr):
     labels.append(eta_label)
 
     for player in players_arr:
-        getStats(player)
+        getStats(player, statsArr, KEY)
 
     delete_labels()
     row = 1
