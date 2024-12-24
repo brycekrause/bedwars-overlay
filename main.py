@@ -142,19 +142,22 @@ def create_labels(name, star_color, ws, fkdr, wlr, unknown):
     elif fkdr > 8:
         fkdr_color = "red"
 
-    if wlr >= 2 and fkdr <= 4:
+    if wlr >= 2 and wlr <= 4:
         wlr_color = "yellow"
     elif wlr > 4 and wlr <= 6:
         wlr_color = "green"
     elif wlr > 6:
         wlr_color = "red"
 
-    if ws >= 10 and ws <= 25:
-        ws_color = "yellow"
-    elif ws > 25 and ws <= 50:
-        ws_color = "green"
-    elif ws > 50:
-        ws_color = "red"
+    try:
+        if ws >= 10 and ws <= 25:
+            ws_color = "yellow"
+        elif ws > 25 and ws <= 50:
+            ws_color = "green"
+        elif ws > 50:
+            ws_color = "red"
+    except TypeError: # if player not found or WS API disabled
+        ws_color = "white"
 
     if fkdr >= 8:
         danger_label = tk.Label(content_frame, text=f"{danger_icon}", fg='red', bg="black", font=("Helvetica", 12, 'bold'))
