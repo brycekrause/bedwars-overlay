@@ -135,13 +135,21 @@ def create_labels(name, star_color, ws, fkdr, wlr, unknown):
     wlr_color = "white"
 
 
-    if fkdr >= 3 and fkdr <= 5:
+    if fkdr < 2:
+        fkdr_color = "#AAAAAA"
+    elif fkdr >= 2 and fkdr < 4:
+        fkdr_color = "white"
+    elif fkdr >= 4 and fkdr <= 6:
         fkdr_color = "yellow"
-    elif fkdr > 5 and fkdr <= 8:
+    elif fkdr > 6 and fkdr <= 8:
         fkdr_color = "green"
     elif fkdr > 8:
         fkdr_color = "red"
 
+    if wlr < 1:
+        wlr_color = "#AAAAAA"
+    elif wlr >= 1 and wlr < 2:
+        wlr_color = "white"
     if wlr >= 2 and wlr <= 4:
         wlr_color = "yellow"
     elif wlr > 4 and wlr <= 6:
@@ -150,6 +158,10 @@ def create_labels(name, star_color, ws, fkdr, wlr, unknown):
         wlr_color = "red"
 
     try:
+        if ws == 0:
+            ws_color = "#AAAAAA"
+        elif ws >= 1 and ws < 10:
+            ws_color = "white"
         if ws >= 10 and ws <= 25:
             ws_color = "yellow"
         elif ws > 25 and ws <= 50:
