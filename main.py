@@ -202,7 +202,6 @@ def command_detected(players_arr):
 
     player_count = len(players_arr)
     eta = f"{round(player_count * 0.4, 2)}s"
-    print(f"ETA: {eta}")
     wait_label = tk.Label(content_frame, text=f"Gathering data..." , fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
     wait_label.grid(row=row, column=0, padx=20, pady=5, sticky='e')
     eta_label = tk.Label(content_frame, text=f"ETA: {eta}" , fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
@@ -227,7 +226,6 @@ def log_monitor():
         while True:
             line = file.readline()
             if "ONLINE:" in line:
-                print(line)
                 players = line.split("ONLINE: ")[1]
                 players_arr = players.split(", ")
                 command_detected(players_arr)
