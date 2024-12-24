@@ -130,6 +130,31 @@ def create_labels(name, star_color, ws, fkdr, wlr, unknown):
 
     name_label = tk.Label(content_frame, text=name, fg=star_color, bg="black", font=("Helvetica", 12, 'bold')) 
     name_label.grid(row=row, column=0, padx=20, pady=5, sticky='w') 
+    fkdr_color = "white"
+    ws_color = "white"
+    wlr_color = "white"
+
+
+    if fkdr >= 3 and fkdr <= 5:
+        fkdr_color = "yellow"
+    elif fkdr > 5 and fkdr <= 8:
+        fkdr_color = "green"
+    elif fkdr > 8:
+        fkdr_color = "red"
+
+    if wlr >= 2 and fkdr <= 4:
+        wlr_color = "yellow"
+    elif wlr > 4 and wlr <= 6:
+        wlr_color = "green"
+    elif wlr > 6:
+        wlr_color = "red"
+
+    if ws >= 10 and ws <= 25:
+        ws_color = "yellow"
+    elif ws > 25 and ws <= 50:
+        ws_color = "green"
+    elif ws > 50:
+        ws_color = "red"
 
     if fkdr >= 8:
         danger_label = tk.Label(content_frame, text=f"{danger_icon}", fg='red', bg="black", font=("Helvetica", 12, 'bold'))
@@ -142,11 +167,11 @@ def create_labels(name, star_color, ws, fkdr, wlr, unknown):
             danger_label = tk.Label(content_frame, text="", fg='red', bg="black", font=("Helvetica", 12, 'bold'))
             danger_label.grid(row=row, column=1, padx=20, pady=5, sticky='w')
 
-    ws_label = tk.Label(content_frame, text=ws, fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+    ws_label = tk.Label(content_frame, text=ws, fg=ws_color, bg="black", font=("Helvetica", 12, 'bold')) 
     ws_label.grid(row=row, column=2, padx=20, pady=5)
-    fkdr_label = tk.Label(content_frame, text=fkdr, fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+    fkdr_label = tk.Label(content_frame, text=fkdr, fg=fkdr_color, bg="black", font=("Helvetica", 12, 'bold')) 
     fkdr_label.grid(row=row, column=3, padx=20, pady=5)
-    wlr_label = tk.Label(content_frame, text=wlr, fg='white', bg="black", font=("Helvetica", 12, 'bold')) 
+    wlr_label = tk.Label(content_frame, text=wlr, fg=wlr_color, bg="black", font=("Helvetica", 12, 'bold')) 
     wlr_label.grid(row=row, column=4, padx=20, pady=5)
 
     labels.append(name_label)
