@@ -1,13 +1,13 @@
 import requests
+import time
 
 def getInfo(call):
   r = requests.get(call)
-  if r.status_code == 204:
-    return {'name': 'Null'}
   return r.json()
 
 def getStats(user, statsArr, KEY):
-    mojangurl = "https://api.mojang.com/users/profiles/minecraft/" + user
+    mojangurl = "https://api.mojang.com/users/profiles/minecraft/" + user.rstrip("\n")
+    time.sleep(0.5)
     mojanginfo = getInfo(mojangurl)
     try:
         uuid = mojanginfo["id"]
@@ -15,10 +15,22 @@ def getStats(user, statsArr, KEY):
         hypixelinfo = getInfo(hypixelurl)
         
         unknown = False
-        ign = hypixelinfo['player']['displayname']
-        star = hypixelinfo['player']['achievements']['bedwars_level']
-        wins = hypixelinfo['player']['stats']['Bedwars']['wins_bedwars']
-        losses = hypixelinfo['player']['stats']['Bedwars']['losses_bedwars']
+        try:
+            ign = hypixelinfo['player']['displayname']
+        except:
+            ign = user.replace("')", "")
+        try:
+            star = hypixelinfo['player']['achievements']['bedwars_level']
+        except:
+            star = 0
+        try:
+            wins = hypixelinfo['player']['stats']['Bedwars']['wins_bedwars']
+        except:
+            wins = 0
+        try:   
+            losses = hypixelinfo['player']['stats']['Bedwars']['losses_bedwars']
+        except:
+            losses = 0
         try:
             wlr = round(wins / losses, 2)
         except ZeroDivisionError:
@@ -27,20 +39,35 @@ def getStats(user, statsArr, KEY):
             winstreak = hypixelinfo['player']['stats']['Bedwars']['winstreak']
         except:
             winstreak = "?"
-        bwfinalkills = hypixelinfo['player']['stats']['Bedwars']['final_kills_bedwars']
-        bwfinaldeaths = hypixelinfo['player']['stats']['Bedwars']['final_deaths_bedwars']
+        try:
+            bwfinalkills = hypixelinfo['player']['stats']['Bedwars']['final_kills_bedwars']
+        except:
+            bwfinalkills = 0
+        try:
+            bwfinaldeaths = hypixelinfo['player']['stats']['Bedwars']['final_deaths_bedwars']
+        except:
+            bwfinaldeaths = 0
         try:
             bwfkdr = round(bwfinalkills / bwfinaldeaths, 2)
         except ZeroDivisionError:
             bwfkdr = bwfinalkills
 
     except Exception as e:
-        ign = user.replace("')", "")
-        star = 0
-        wlr = 0
-        winstreak = 0
-        bwfkdr = 0
-        unknown = True
+        try:
+            if mojanginfo['error'] == "CONSTRAINT_VIOLATION":
+                print(mojanginfo['error'], "retrying...")
+                print(mojanginfo)
+                time.sleep(10)
+                getStats(user.replace("\n", ""), statsArr, KEY)
+        except KeyError:
+            ign = user.replace("')", "")
+            star = 0
+            wlr = 0
+            winstreak = 0
+            bwfkdr = 0
+            unknown = True
+            print(f"[ERROR] {ign}\t {e}")
+            print(mojanginfo)
 
     name = f"[{star}✫] {ign}"
 
