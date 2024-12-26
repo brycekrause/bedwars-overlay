@@ -60,14 +60,20 @@ def getStats(user, statsArr, KEY):
                 time.sleep(10)
                 getStats(user.replace("\n", ""), statsArr, KEY)
         except KeyError:
-            ign = user.replace("')", "")
-            star = 0
-            wlr = 0
-            winstreak = 0
-            bwfkdr = 0
-            unknown = True
-            print(f"[ERROR] {ign}\t {e}")
-            print(mojanginfo)
+            try:
+                if mojanginfo['errorMessage'] == f"Couldn't find any profile with name {user}":
+                    ign = user.replace("')", "")
+                    star = 0
+                    wlr = 0
+                    winstreak = 0
+                    bwfkdr = 0
+                    unknown = True
+                    print(f"[ERROR] {ign}\t {e}")
+                    print(mojanginfo)
+            except:
+                print(mojanginfo + " retrying...")
+                time.sleep(10)
+                getStats(user.replace("\n", ""), statsArr, KEY)                
 
     name = f"[{star}✫] {ign}"
 
