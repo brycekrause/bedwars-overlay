@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import os
-from key import apiWindow
+from getKey import apiWindow
 from getStats import getStats
 
 # Get the path to the latest.log file
