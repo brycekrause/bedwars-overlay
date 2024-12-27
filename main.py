@@ -244,12 +244,6 @@ def log_monitor():
                 except IndexError as e:
                     pass
 
-#line 247, in log_monitor
-#    players = line.split("('bw ")[1]
-#              ~~~~~~~~~~~~~~~~~~~^^^
-#IndexError: list index out of range
-
-
 def start_threading():
     thread = threading.Thread(target=log_monitor) 
     thread.daemon = True # This makes sure the thread will exit when the main program exits

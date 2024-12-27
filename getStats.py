@@ -55,8 +55,6 @@ def getStats(user, statsArr, KEY):
     except Exception as e:
         try:
             if mojanginfo['error'] == "CONSTRAINT_VIOLATION":
-                print(mojanginfo['error'], "retrying...")
-                print(mojanginfo)
                 time.sleep(10)
                 getStats(user.replace("\n", ""), statsArr, KEY)
         except KeyError:
@@ -68,11 +66,8 @@ def getStats(user, statsArr, KEY):
                     winstreak = 0
                     bwfkdr = 0
                     unknown = True
-                    print(f"[ERROR] {ign}\t {e}")
-                    print(mojanginfo)
             except:
                 if len(mojanginfo) == 1: 
-                    print(str(mojanginfo) + " retrying...")
                     star = "ERROR"  
                     ign = user.replace("')", "")
                     wlr = 0
@@ -81,7 +76,6 @@ def getStats(user, statsArr, KEY):
                     unknown = True      
 
     if star == "ERROR":
-        print(user + " <<<< ERROR RETRYING")
         getStats(user, statsArr, KEY)
     else:
         name = f"[{star}✫] {ign}"
