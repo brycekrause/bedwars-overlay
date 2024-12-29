@@ -15,6 +15,7 @@ def getStats(user, statsArr, KEY):
         hypixelinfo = getInfo(hypixelurl)
         
         unknown = False
+        success = False
         try:
             ign = hypixelinfo['player']['displayname']
         except:
@@ -54,12 +55,12 @@ def getStats(user, statsArr, KEY):
 
     except Exception as e:
         try:
-            if mojanginfo['error'] == "CONSTRAINT_VIOLATION":
+            if mojanginfo['error'] == "CONSTRAINT_VIOLATION": # rate limit error
                 time.sleep(10)
                 getStats(user.replace("\n", ""), statsArr, KEY)
         except KeyError:
             try:
-                if mojanginfo['errorMessage'] == f"Couldn't find any profile with name {user}":
+                if mojanginfo['errorMessage'] == f"Couldn't find any profile with name {user}": # check if player exists
                     ign = user.replace("')", "")
                     star = 0
                     wlr = 0
@@ -67,16 +68,20 @@ def getStats(user, statsArr, KEY):
                     bwfkdr = 0
                     unknown = True
             except:
-                if len(mojanginfo) == 1: 
-                    star = "ERROR"  
+                if len(mojanginfo) == 1: # simple API error, it may not have fully loaded and needs to retry     
+                    getStats(user, statsArr, KEY)
+                else:
                     ign = user.replace("')", "")
+                    star = 0
                     wlr = 0
                     winstreak = 0
                     bwfkdr = 0
-                    unknown = True      
+                    unknown = True                    
 
-    if star == "ERROR":
-        getStats(user, statsArr, KEY)
+    #  File "C:\Users\bryce\OneDrive\Desktop\dev\python\bedwars-overlay\getStats.py", line 78, in getStats
+    #   if star == "ERROR":
+    #       ^^^^
+    #   UnboundLocalError: cannot access local variable 'star' where it is not associated with a value
     else:
         name = f"[{star}✫] {ign}"
 
