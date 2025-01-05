@@ -1,11 +1,14 @@
 import requests
 import time
 
+
+
 def getInfo(call):
   r = requests.get(call)
   return r.json()
 
 def getStats(user, statsArr, KEY):
+    success = False
     mojangurl = "https://api.mojang.com/users/profiles/minecraft/" + user.rstrip("\n")
     time.sleep(0.5)
     mojanginfo = getInfo(mojangurl)
@@ -13,9 +16,8 @@ def getStats(user, statsArr, KEY):
         uuid = mojanginfo["id"]
         hypixelurl = f"https://api.hypixel.net/player?key={KEY}&uuid=" + uuid
         hypixelinfo = getInfo(hypixelurl)
-        
         unknown = False
-        success = False
+        success = True
         try:
             ign = hypixelinfo['player']['displayname']
         except:
@@ -54,11 +56,13 @@ def getStats(user, statsArr, KEY):
             bwfkdr = bwfinalkills
 
     except Exception as e:
+        print(f"Exception: {e}, {mojanginfo}")
         try:
             if mojanginfo['error'] == "CONSTRAINT_VIOLATION": # rate limit error
                 time.sleep(5)
-                getStats(user.replace("\n", ""), statsArr, KEY)
-        except KeyError:
+                success = False
+        except KeyError as e:
+            print(f"KeyError: {e}, {mojanginfo}")
             try:
                 if mojanginfo['errorMessage'] == f"Couldn't find any profile with name {user}": # check if player exists
                     ign = user.replace("')", "")
@@ -67,9 +71,11 @@ def getStats(user, statsArr, KEY):
                     winstreak = 0
                     bwfkdr = 0
                     unknown = True
-            except:
+                    success = True
+            except KeyError as e:
+                print(f"KeyError: {e}, {mojanginfo}  ({len(mojanginfo)})")
                 if len(mojanginfo) == 1: # simple API error, it may not have fully loaded and needs to retry     
-                    getStats(user, statsArr, KEY)
+                    success = False
                 else:
                     ign = user.replace("')", "")
                     star = 0
@@ -77,39 +83,44 @@ def getStats(user, statsArr, KEY):
                     winstreak = 0
                     bwfkdr = 0
                     unknown = True   
-                                     
-    name = f"[{star}✫] {ign}"
+                    success = True
 
-    if star <= 99:
-        star_color = "#AAAAAA"
-    elif star >= 100 and star <= 199:
-        star_color = "#FFFFFF"
-    elif star >= 200 and star <= 299:
-        star_color = "#FFAA00"
-    elif star >= 300 and star <= 399:
-        star_color = "#55FFFF"
-    elif star >= 400 and star <= 499:
-        star_color = "#00AA00"
-    elif star >= 500 and star <= 599:
-        star_color = "#00AAAA"
-    elif star >= 600 and star <= 699:
-        star_color = "#AA0000"
-    elif star >= 700 and star <= 799:
-        star_color = "#FF55FF"
-    elif star >= 800 and star <= 899:
-        star_color = "#5555FF"
-    elif star >= 900 and star <= 999:
-        star_color = "#AA00AA"
-    elif star >= 1000:
-        star_color = "#FFFF55"
 
-    statsArr.append(
-        {
-            "name": name,
-            "star_color": star_color,
-            "ws": winstreak,
-            "fkdr": bwfkdr,
-            "wlr": wlr,
-            "unknown": unknown
-        }
-    )
+    if success == False:
+        getStats(user, statsArr, KEY)
+    else:                
+        name = f"[{star}✫] {ign}"       
+
+        if star <= 99:
+            star_color = "#AAAAAA"
+        elif star >= 100 and star <= 199:
+            star_color = "#FFFFFF"
+        elif star >= 200 and star <= 299:
+            star_color = "#FFAA00"
+        elif star >= 300 and star <= 399:
+            star_color = "#55FFFF"
+        elif star >= 400 and star <= 499:
+            star_color = "#00AA00"
+        elif star >= 500 and star <= 599:
+            star_color = "#00AAAA"
+        elif star >= 600 and star <= 699:
+            star_color = "#AA0000"
+        elif star >= 700 and star <= 799:
+            star_color = "#FF55FF"
+        elif star >= 800 and star <= 899:
+            star_color = "#5555FF"
+        elif star >= 900 and star <= 999:
+            star_color = "#AA00AA"
+        elif star >= 1000:
+            star_color = "#FFFF55"
+
+        statsArr.append(
+            {
+                "name": name,
+                "star_color": star_color,
+                "ws": winstreak,
+                "fkdr": bwfkdr,
+                "wlr": wlr,
+                "unknown": unknown
+            }
+        )
