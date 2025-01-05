@@ -201,11 +201,6 @@ def delete_labels():
     for label in labels:
         label.destroy()
 
-def sortPlayers(statsArr):
-    statsArr.sort(key=lambda x: x['fkdr'], reverse=True) # change this
-    for player in statsArr:
-        create_labels(player['name'], player['star_color'], player['ws'], player['fkdr'], player['wlr'], player['unknown'])
-
 def command_detected(players_arr):
     global row, statsArr, start_time
     row = 1
@@ -223,7 +218,8 @@ def command_detected(players_arr):
 
     delete_labels()
     row = 1
-    sortPlayers(statsArr)
+    for player in statsArr:
+        create_labels(player['name'], player['star_color'], player['ws'], player['fkdr'], player['wlr'], player['unknown'])
 
 
 def log_monitor():

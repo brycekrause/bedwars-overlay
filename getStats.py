@@ -56,7 +56,7 @@ def getStats(user, statsArr, KEY):
     except Exception as e:
         try:
             if mojanginfo['error'] == "CONSTRAINT_VIOLATION": # rate limit error
-                time.sleep(10)
+                time.sleep(5)
                 getStats(user.replace("\n", ""), statsArr, KEY)
         except KeyError:
             try:
@@ -76,45 +76,40 @@ def getStats(user, statsArr, KEY):
                     wlr = 0
                     winstreak = 0
                     bwfkdr = 0
-                    unknown = True                    
+                    unknown = True   
+                                     
+    name = f"[{star}✫] {ign}"
 
-    #  File "C:\Users\bryce\OneDrive\Desktop\dev\python\bedwars-overlay\getStats.py", line 78, in getStats
-    #   if star == "ERROR":
-    #       ^^^^
-    #   UnboundLocalError: cannot access local variable 'star' where it is not associated with a value
-    else:
-        name = f"[{star}✫] {ign}"
+    if star <= 99:
+        star_color = "#AAAAAA"
+    elif star >= 100 and star <= 199:
+        star_color = "#FFFFFF"
+    elif star >= 200 and star <= 299:
+        star_color = "#FFAA00"
+    elif star >= 300 and star <= 399:
+        star_color = "#55FFFF"
+    elif star >= 400 and star <= 499:
+        star_color = "#00AA00"
+    elif star >= 500 and star <= 599:
+        star_color = "#00AAAA"
+    elif star >= 600 and star <= 699:
+        star_color = "#AA0000"
+    elif star >= 700 and star <= 799:
+        star_color = "#FF55FF"
+    elif star >= 800 and star <= 899:
+        star_color = "#5555FF"
+    elif star >= 900 and star <= 999:
+        star_color = "#AA00AA"
+    elif star >= 1000:
+        star_color = "#FFFF55"
 
-        if star <= 99:
-            star_color = "#AAAAAA"
-        elif star >= 100 and star <= 199:
-            star_color = "#FFFFFF"
-        elif star >= 200 and star <= 299:
-            star_color = "#FFAA00"
-        elif star >= 300 and star <= 399:
-            star_color = "#55FFFF"
-        elif star >= 400 and star <= 499:
-            star_color = "#00AA00"
-        elif star >= 500 and star <= 599:
-            star_color = "#00AAAA"
-        elif star >= 600 and star <= 699:
-            star_color = "#AA0000"
-        elif star >= 700 and star <= 799:
-            star_color = "#FF55FF"
-        elif star >= 800 and star <= 899:
-            star_color = "#5555FF"
-        elif star >= 900 and star <= 999:
-            star_color = "#AA00AA"
-        elif star >= 1000:
-            star_color = "#FFFF55"
-
-        statsArr.append(
-            {
-                "name": name,
-                "star_color": star_color,
-                "ws": winstreak,
-                "fkdr": bwfkdr,
-                "wlr": wlr,
-                "unknown": unknown
-            }
-        )
+    statsArr.append(
+        {
+            "name": name,
+            "star_color": star_color,
+            "ws": winstreak,
+            "fkdr": bwfkdr,
+            "wlr": wlr,
+            "unknown": unknown
+        }
+    )
